@@ -1,16 +1,45 @@
 # docker-compose.yml
+version: '3.8'
+
 services:
-  mysql:
-    image: mysql:8.0
-    container_name: mysql-reino
-    restart: always
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jornada-reino-app
+    restart: unless-stopped
+    tty: true
     environment:
-      MYSQL_ROOT_PASSWORD: root_password_temporaria  # opcional, mas recomendado
+      SERVICE_NAME: app
+      SERVICE_TAGS: dev
+    working_dir: /var/www/html
+    volumes:
+      - ./:/var/www/html
+      - ./docker/php/local.ini:/usr/local/etc/php/conf.d/local.ini
+    networks:
+      - jornada-reino-network
+    depends_on:
+      - db
+    ports:
+      - "8000:8000"  # Para rodar com php artisan serve
+
+  db:
+    image: mysql:8.0
+    container_name: jornada-reino-db
+    restart: unless-stopped
+    tty: true
+    ports:
+      - "3306:3306"
+    environment:
       MYSQL_DATABASE: reino
       MYSQL_USER: reino_user
       MYSQL_PASSWORD: Lav8@472
-    ports:
-      - "3306:3306"
+      MYSQL_ROOT_PASSWORD: rootpassword  # opcional, mas útil para admin
     volumes:
-      - ./mysql_data:/var/lib/mysql
-    command: --default-authentication-plugin=mysql_native_password
+      - ./docker/mysql:/var/lib/mysql
+    networks:
+      - jornada-reino-network
+
+networks:
+  jornada-reino-network:
+    driver: bridge

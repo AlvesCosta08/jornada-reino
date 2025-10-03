@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\PrayerRequest;
+use App\Models\JourneyResponse; // 👈 Import essencial
 use Illuminate\Support\Facades\Validator;
 
 class JourneyController extends Controller
@@ -14,10 +15,12 @@ class JourneyController extends Controller
             'title' => 'Início da Sua Jornada Espiritual'
         ]);
     }
+
     public function showPrayerForm()
     {
         return view('journey.prayer');
     }
+
     public function station($id)
     {
         $stations = [
@@ -81,23 +84,19 @@ class JourneyController extends Controller
 
     public function storeResponse(Request $request, $id)
     {
-        // Validar station_id
         if (!in_array($id, [1, 2, 3])) {
             return redirect()->route('journey.start')->with('error', 'Estação inválida.');
         }
 
-        // Validar opção selecionada
         $request->validate([
             'option_index' => 'required|integer|min:0|max:3',
         ]);
 
-        // Salvar resposta
         $data = [
             'station_id' => $id,
             'option_index' => $request->option_index,
         ];
 
-        // Associar ao usuário logado ou usar session_id para anônimos
         if (auth()->check()) {
             $data['user_id'] = auth()->id();
         } else {
@@ -106,7 +105,6 @@ class JourneyController extends Controller
 
         JourneyResponse::create($data);
 
-        // Redirecionar para próxima estação ou final
         $nextStation = $id + 1;
         if ($nextStation <= 3) {
             return redirect()->route('station.show', $nextStation);
@@ -121,6 +119,7 @@ class JourneyController extends Controller
             'request' => 'required|string|min:5|max:1000',
             'name' => 'nullable|string|max:100',
             'email' => 'nullable|email|max:255',
+            'phone' => 'nullable|string|max:20',
         ]);
 
         if ($validator->fails()) {
@@ -130,7 +129,7 @@ class JourneyController extends Controller
             ], 422);
         }
 
-        PrayerRequest::create($request->only(['name', 'email', 'request']));
+        PrayerRequest::create($request->only(['name', 'email','phone','request']));
 
         return response()->json([
             'success' => true,

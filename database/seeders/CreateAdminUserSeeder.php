@@ -13,18 +13,19 @@ class CreateAdminUserSeeder extends Seeder
      */
     public function run(): void
     {
-        // Verifica se já existe um usuário com esse e-mail
-        if (!User::where('email', 'admin@encontro.com')->exists()) {
+        $email = 'admin@encontro.com'; // 👈 Defina uma vez
+
+        if (!User::where('email', $email)->exists()) {
             User::create([
                 'name' => 'Administrador',
-                'email' => 'admin@gmail.com',
-                'password' => Hash::make('Lav8@471'), // 🔒 altere depois!
-                'email_verified_at' => now(), // ✅ marca como verificado (opcional)
+                'email' => $email,
+                'password' => Hash::make('Lav8@471'),
+                'email_verified_at' => now(),
             ]);
 
-            $this->command->info('Usuário administrador criado: admin@gmail.com');
+            $this->command->info("Usuário administrador criado: {$email}");
         } else {
-            $this->command->warn('Usuário administrador já existe.');
+            $this->command->warn("Usuário administrador já existe: {$email}");
         }
     }
 }

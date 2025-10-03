@@ -2,17 +2,13 @@
 
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class PrayerRequest extends Model
 {
-    use HasFactory;
-
     protected $fillable = [
         'name',
-        'phone',        // ✅ substitui email
+        'phone',      // ← deve estar aqui
         'request',
-        'is_private'
     ];
 }
