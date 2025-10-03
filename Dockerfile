@@ -20,14 +20,21 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 # Definir diretório de trabalho
 WORKDIR /var/www/html
 
-# Copiar arquivos do projeto
+# Copiar apenas os arquivos do Composer primeiro (para melhor cache)
+COPY composer.json composer.lock ./
+
+# Instalar dependências do PHP
+RUN composer install --no-dev --optimize-autoloader --no-interaction
+
+# Copiar o restante do código
 COPY . .
 
-# Dar permissões
-RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache
+# Dar permissões às pastas necessárias
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
-# Expor porta (opcional, já que usamos artisan serve)
+# Expor porta (embora artisan serve use 8000, o FPM normalmente usa 9000)
 EXPOSE 9000
 
-# Comando padrão (opcional)
+# Comando padrão
 CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
