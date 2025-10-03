@@ -8,7 +8,7 @@ if (extension_loaded('pdo_pgsql')) {
 if (extension_loaded('pgsql')) {
     echo "PostgreSQL está instalado\n";
 } else {
-    echo "PostgreSQL NÃO está instalado\n";
+    echo "PostgreSQL não está instalado\n";
 }
 
 echo "Extensões carregadas:\n";
