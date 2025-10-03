@@ -82,24 +82,44 @@
     </div>
 </div>
 
-<script>
-// Animação especial para a página inicial
-document.addEventListener('DOMContentLoaded', function() {
+{{-- Botão flutuante de admin (só visível para usuários logados) --}}
+@if(auth()->check())
+    <a href="{{ route('admin.prayer-requests') }}"
+       class="btn btn-sm btn-outline-light rounded-circle position-fixed"
+       style="bottom: 20px; right: 20px; z-index: 1050; opacity: 0.7; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 2px 6px rgba(0,0,0,0.2);"
+       title="Área Administrativa"
+       data-bs-toggle="tooltip"
+       data-bs-placement="left">
+        👑
+    </a>
 
-    // Efeito de flutuação alternada nos ícones
-    const icons = document.querySelectorAll('.float-animation');
-    icons.forEach((icon, index) => {
-        icon.style.animationDelay = `${index * 0.3}s`;
-    });
+    @push('scripts')
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            // Ativar tooltip do Bootstrap (se disponível)
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+                if (typeof bootstrap !== 'undefined') {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                }
+            });
 
-    // Efeito de brilho intermitente no título
-    const title = document.querySelector('.title-glow');
-    if (title) {
-        setInterval(() => {
-            title.classList.toggle('text-glow');
-        }, 4000);
-    }
+            // Efeito de brilho intermitente no título
+            const title = document.querySelector('.title-glow');
+            if (title) {
+                setInterval(() => {
+                    title.classList.toggle('text-glow');
+                }, 4000);
+            }
 
-});
-</script>
+            // Animação especial para a página inicial
+            const icons = document.querySelectorAll('.float-animation');
+            icons.forEach((icon, index) => {
+                icon.style.animationDelay = `${index * 0.3}s`;
+            });
+        });
+    </script>
+    @endpush
+@endif
+
 @endsection
