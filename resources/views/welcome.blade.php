@@ -96,8 +96,11 @@
         👑
     </a>
 @else
-    {{-- Visitante: vai para login --}}
-    <a href="{{ route('login') }}"
+    {{-- Visitante: vai para login (com fallback seguro) --}}
+    @php
+        $loginUrl = route('login', [], false) ?: '/login';
+    @endphp
+    <a href="{{ $loginUrl }}"
        class="btn btn-sm btn-outline-light rounded-circle position-fixed"
        style="bottom: 20px; right: 20px; z-index: 1050; opacity: 0.75; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 2px 8px rgba(0,0,0,0.25); transition: opacity 0.2s;"
        title="Login Administrativo"
