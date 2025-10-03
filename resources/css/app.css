@@ -1,0 +1,208 @@
+/* resources/css/app.css */
+
+/* Importar bibliotecas */
+@import 'bootstrap/dist/css/bootstrap.min.css';
+@import 'animate.css/animate.min.css';
+@import 'aos/dist/aos.css';
+
+/* ===== CORES ESPIRITUAIS ===== */
+:root {
+    --roxo-escuro: #1a1a2e;
+    --roxo-medio: #16213e;
+    --azul-escuro: #0f3460;
+    --dourado: #FFD700;
+    --luz-celestial: #4cc9f0;
+    --purpura-real: #7209b7;
+}
+
+/* ===== ESTILOS GERAIS ===== */
+body {
+    background: linear-gradient(135deg, var(--roxo-escuro) 0%, var(--roxo-medio) 100%);
+    min-height: 100vh;
+    font-family: 'Arial', sans-serif;
+    color: white;
+    overflow-x: hidden;
+}
+
+/* ===== EFEITO VIDRO (GLASS EFFECT) ===== */
+.glass-effect {
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(15px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    border-radius: 20px;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+/* ===== BOTÃO ESPECIAL DA JORNADA ===== */
+.btn-journey {
+    background: linear-gradient(45deg, var(--purpura-real), #4a00e0);
+    border: none;
+    color: white;
+    padding: 15px 35px;
+    border-radius: 50px;
+    font-weight: bold;
+    font-size: 1.1rem;
+    position: relative;
+    overflow: hidden;
+    transition: all 0.4s ease;
+}
+
+/* Efeito de brilho no hover */
+.btn-journey::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    transition: left 0.5s;
+}
+
+.btn-journey:hover::before {
+    left: 100%;
+}
+
+.btn-journey:hover {
+    transform: translateY(-3px) scale(1.05);
+    box-shadow: 0 15px 30px rgba(142, 45, 226, 0.4);
+}
+
+/* ===== ANIMAÇÕES PERSONALIZADAS ===== */
+
+/* Flutuação suave */
+@keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+}
+
+/* Brilho pulsante */
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 20px rgba(255, 215, 0, 0.3); }
+    50% { box-shadow: 0 0 40px rgba(255, 215, 0, 0.6); }
+}
+
+/* Brilho no texto */
+@keyframes textGlow {
+    0%, 100% { text-shadow: 0 0 10px currentColor; }
+    50% { text-shadow: 0 0 20px currentColor, 0 0 30px currentColor; }
+}
+
+/* Entrada da estação */
+@keyframes stationEntrance {
+    0% {
+        opacity: 0;
+        transform: translateX(100px) rotateY(20deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateX(0) rotateY(0);
+    }
+}
+
+/* ===== CLASSES DE ANIMAÇÃO ===== */
+.float-animation {
+    animation: float 3s ease-in-out infinite;
+}
+
+.glow-animation {
+    animation: glow 2s ease-in-out infinite;
+}
+
+.text-glow {
+    animation: textGlow 2s ease-in-out infinite;
+}
+
+.station-entrance {
+    animation: stationEntrance 1s ease-out;
+}
+
+/* ===== PARTÍCULAS DE FUNDO ===== */
+.particles-container {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    pointer-events: none;
+    z-index: -1;
+}
+
+.particle {
+    position: absolute;
+    background: rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    animation: float 6s ease-in-out infinite;
+}
+
+/* ===== CARDS INTERATIVOS ===== */
+.interactive-card {
+    transition: all 0.3s ease;
+    cursor: pointer;
+    border: 2px solid transparent;
+}
+
+.interactive-card:hover {
+    transform: translateY(-5px) scale(1.02);
+    border-color: var(--luz-celestial);
+    box-shadow: 0 10px 25px rgba(76, 201, 240, 0.3);
+}
+
+/* ===== BARRA DE PROGRESSO ANIMADA ===== */
+.progress-journey {
+    height: 8px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.1);
+    overflow: hidden;
+}
+
+.progress-journey .progress-bar {
+    background: linear-gradient(90deg, var(--purpura-real), var(--luz-celestial));
+    transition: width 1s ease-in-out;
+    position: relative;
+}
+
+/* Efeito de brilho na barra */
+.progress-journey .progress-bar::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent);
+    animation: progressShine 2s infinite;
+}
+
+@keyframes progressShine {
+    0% { left: -100%; }
+    100% { left: 100%; }
+}
+
+/* ===== BOTÕES DE OPÇÃO ===== */
+.option-btn {
+    transition: all 0.3s ease;
+    position: relative;
+    overflow: hidden;
+    border: 2px solid transparent;
+}
+
+.option-btn:hover {
+    border-color: rgba(255, 215, 0, 0.5);
+    transform: translateX(10px) scale(1.02);
+}
+
+.option-btn.selected {
+    background: linear-gradient(45deg, var(--purpura-real), var(--luz-celestial)) !important;
+    transform: scale(1.05);
+    box-shadow: 0 5px 15px rgba(76, 201, 240, 0.4);
+}
+
+/* ===== CORES ESPECIAIS ===== */
+.text-gold {
+    color: var(--dourado);
+}
+
+.bg-spiritual {
+    background: linear-gradient(135deg, var(--roxo-escuro) 0%, var(--roxo-medio) 50%, var(--azul-escuro) 100%);
+}
