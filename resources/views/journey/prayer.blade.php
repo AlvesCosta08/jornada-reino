@@ -16,6 +16,11 @@
                         <input type="text" class="form-control bg-transparent text-white border-0 rounded-3"
                                id="name" placeholder="Seu nome">
                     </div>
+                    <div class="mb-3 text-start">
+                        <label for="phone" class="form-label">Telefone / WhatsApp (opcional)</label>
+                        <input type="tel" class="form-control bg-transparent text-white border-0 rounded-3"
+                               id="phone" placeholder="(00) 90000-0000">
+                    </div>
                     <div class="mb-4 text-start">
                         <label for="request" class="form-label">Pedido de oração *</label>
                         <textarea class="form-control bg-transparent text-white border-0 rounded-3"
@@ -34,9 +39,10 @@
 <script>
 document.getElementById('prayerForm').addEventListener('submit', function(e) {
     e.preventDefault();
+
     const request = document.getElementById('request').value.trim();
     if (request.length < 5) {
-        alert('Por favor, escreva um pedido com mais detalhes.');
+        alert('Por favor, escreva um pedido com mais detalhes (mínimo 5 caracteres).');
         return;
     }
 
@@ -44,19 +50,28 @@ document.getElementById('prayerForm').addEventListener('submit', function(e) {
         method: "POST",
         headers: {
             "Content-Type": "application/json",
+            "Accept": "application/json",
             "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').getAttribute('content')
         },
         body: JSON.stringify({
             name: document.getElementById('name').value.trim(),
+            phone: document.getElementById('phone').value.trim(),
             request: request
         })
     })
     .then(res => res.json())
     .then(data => {
-        alert('Seu pedido foi recebido com amor. 🙏');
-        window.location.href = "{{ route('home') }}";
+        if (data.success) {
+            alert('Seu pedido foi recebido com amor. 🙏');
+            window.location.href = "{{ route('home') }}";
+        } else {
+            alert('Erro: ' + (data.message || 'Não foi possível enviar seu pedido.'));
+        }
     })
-    .catch(() => alert('Erro ao enviar. Tente novamente.'));
+    .catch(err => {
+        console.error('Erro na requisição:', err);
+        alert('Erro ao enviar. Verifique sua conexão e tente novamente.');
+    });
 });
 </script>
 @endpush

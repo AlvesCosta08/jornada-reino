@@ -79,7 +79,41 @@ class JourneyController extends Controller
         return view('journey.final');
     }
 
-    // REMOVIDO: showPrayerForm()
+    public function storeResponse(Request $request, $id)
+    {
+        // Validar station_id
+        if (!in_array($id, [1, 2, 3])) {
+            return redirect()->route('journey.start')->with('error', 'Estação inválida.');
+        }
+
+        // Validar opção selecionada
+        $request->validate([
+            'option_index' => 'required|integer|min:0|max:3',
+        ]);
+
+        // Salvar resposta
+        $data = [
+            'station_id' => $id,
+            'option_index' => $request->option_index,
+        ];
+
+        // Associar ao usuário logado ou usar session_id para anônimos
+        if (auth()->check()) {
+            $data['user_id'] = auth()->id();
+        } else {
+            $data['session_id'] = session()->getId();
+        }
+
+        JourneyResponse::create($data);
+
+        // Redirecionar para próxima estação ou final
+        $nextStation = $id + 1;
+        if ($nextStation <= 3) {
+            return redirect()->route('station.show', $nextStation);
+        } else {
+            return redirect()->route('journey.final');
+        }
+    }
 
     public function storePrayerRequest(Request $request)
     {

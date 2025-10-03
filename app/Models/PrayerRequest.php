@@ -11,8 +11,8 @@ class PrayerRequest extends Model
 
     protected $fillable = [
         'name',
+        'phone',        // ✅ substitui email
         'request',
-        'email',
         'is_private'
     ];
 }
