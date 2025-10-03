@@ -12,11 +12,11 @@ RUN apt-get update && apt-get install -y \
     zip \
     unzip \
     supervisor \
-    libpq-dev \  # ✅ ADICIONAR ESTA LINHA para PostgreSQL
+    libpq-dev \
     && docker-php-ext-install \
     pdo_mysql \
-    pdo_pgsql \  # ✅ ADICIONAR extensão PDO PostgreSQL
-    pgsql \      # ✅ ADICIONAR extensão PostgreSQL
+    pdo_pgsql \
+    pgsql \
     mbstring \
     exif \
     pcntl \
