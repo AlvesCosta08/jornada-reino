@@ -235,3 +235,4 @@ jornada-reino/
 ├── vite.config.js
 └── webpack.mix.js (ou webpack.config.js)
 # jornada-do-reino
+# jornada-reino
