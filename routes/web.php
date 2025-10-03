@@ -33,3 +33,8 @@ if (app()->environment('local')) {
         ]);
     });
 }
+// Área administrativa protegida
+Route::middleware(['auth'])->prefix('admin')->group(function () {
+    Route::get('/pedidos-oracao', [Admin\PrayerRequestController::class, 'index'])
+         ->name('admin.prayer-requests');
+});
