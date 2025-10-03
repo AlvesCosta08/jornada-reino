@@ -82,44 +82,59 @@
     </div>
 </div>
 
-{{-- Botão flutuante de admin (só visível para usuários logados) --}}
+{{-- Botão flutuante inteligente: login ou admin --}}
 @if(auth()->check())
+    {{-- Usuário logado: vai para o painel de admin --}}
     <a href="{{ route('admin.prayer-requests') }}"
        class="btn btn-sm btn-outline-light rounded-circle position-fixed"
-       style="bottom: 20px; right: 20px; z-index: 1050; opacity: 0.7; backdrop-filter: blur(5px); border: 1px solid rgba(255,255,255,0.2); box-shadow: 0 2px 6px rgba(0,0,0,0.2);"
+       style="bottom: 20px; right: 20px; z-index: 1050; opacity: 0.75; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 2px 8px rgba(0,0,0,0.25); transition: opacity 0.2s;"
        title="Área Administrativa"
        data-bs-toggle="tooltip"
-       data-bs-placement="left">
+       data-bs-placement="left"
+       onmouseover="this.style.opacity='1'"
+       onmouseout="this.style.opacity='0.75'">
         👑
     </a>
-
-    @push('scripts')
-    <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            // Ativar tooltip do Bootstrap (se disponível)
-            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
-            tooltipTriggerList.forEach(function (tooltipTriggerEl) {
-                if (typeof bootstrap !== 'undefined') {
-                    new bootstrap.Tooltip(tooltipTriggerEl);
-                }
-            });
-
-            // Efeito de brilho intermitente no título
-            const title = document.querySelector('.title-glow');
-            if (title) {
-                setInterval(() => {
-                    title.classList.toggle('text-glow');
-                }, 4000);
-            }
-
-            // Animação especial para a página inicial
-            const icons = document.querySelectorAll('.float-animation');
-            icons.forEach((icon, index) => {
-                icon.style.animationDelay = `${index * 0.3}s`;
-            });
-        });
-    </script>
-    @endpush
+@else
+    {{-- Visitante: vai para login --}}
+    <a href="{{ route('login') }}"
+       class="btn btn-sm btn-outline-light rounded-circle position-fixed"
+       style="bottom: 20px; right: 20px; z-index: 1050; opacity: 0.75; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 2px 8px rgba(0,0,0,0.25); transition: opacity 0.2s;"
+       title="Login Administrativo"
+       data-bs-toggle="tooltip"
+       data-bs-placement="left"
+       onmouseover="this.style.opacity='1'"
+       onmouseout="this.style.opacity='0.75'">
+        🔐
+    </a>
 @endif
+
+@push('scripts')
+<script>
+document.addEventListener('DOMContentLoaded', function () {
+    // Ativar tooltips do Bootstrap (se disponível)
+    const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+    tooltipTriggerList.forEach(function (tooltipTriggerEl) {
+        if (typeof bootstrap !== 'undefined') {
+            new bootstrap.Tooltip(tooltipTriggerEl);
+        }
+    });
+
+    // Animação do título
+    const title = document.querySelector('.title-glow');
+    if (title) {
+        setInterval(() => {
+            title.classList.toggle('text-glow');
+        }, 4000);
+    }
+
+    // Animação dos ícones flutuantes
+    const icons = document.querySelectorAll('.float-animation');
+    icons.forEach((icon, index) => {
+        icon.style.animationDelay = `${index * 0.3}s`;
+    });
+});
+</script>
+@endpush
 
 @endsection
