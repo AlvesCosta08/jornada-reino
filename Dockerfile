@@ -1,32 +1,49 @@
-FROM node:18-alpine
+# Usa PHP 8.2 com FPM (recomendado para Laravel 11)
+FROM php:8.2-fpm
 
-# Defina o diretório de trabalho
+# Instala dependências do sistema necessárias
+RUN apt-get update && apt-get install -y \
+    git \
+    curl \
+    libpng-dev \
+    libonig-dev \
+    libxml2-dev \
+    libzip-dev \
+    zip \
+    unzip \
+    supervisor \
+    && docker-php-ext-install pdo_mysql mbstring exif pcntl bcmath gd zip
+
+# Instala Composer globalmente
+COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
+
+# Define o diretório de trabalho
 WORKDIR /var/www/html
 
-# Copie os arquivos de dependência
-COPY package*.json ./
+# Copia apenas os arquivos do Composer primeiro (para melhor cache no build)
+COPY composer.json composer.lock ./
 
-# Configure variáveis de ambiente
-ENV NODE_ENV=production
-ENV CI=true
+# Instala dependências SEM executar scripts/plugins (evita falhas por falta do artisan ou execução como root)
+# COMPOSER_ALLOW_SUPERUSER=1 é seguro em containers e evita desativação de plugins/scripts
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer install \
+    --no-dev \
+    --no-scripts \
+    --no-autoloader \
+    --optimize-autoloader \
+    --no-interaction
 
-# Primeiro, atualize o package-lock.json
-RUN npm install --package-lock-only
-
-# Limpe qualquer cache problemático
-RUN npm cache clean --force
-
-# Instale as dependências
-RUN npm ci --only=production=false --verbose
-
-# Copie os arquivos de código
+# Copia todo o código da aplicação (incluindo artisan, .env, etc.)
 COPY . .
 
-# Execute o build com mais informações
-RUN npm run build -- --debug
+# Gera o autoloader agora que todos os arquivos estão presentes
+RUN COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize
 
-# Configuração para produção
-FROM nginx:alpine
-COPY --from=0 /var/www/html/dist /usr/share/nginx/html
-EXPOSE 80
-CMD ["nginx", "-g", "daemon off;"]
+# Define permissões corretas para pastas críticas do Laravel
+RUN chown -R www-www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+    && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
+
+# Expõe a porta do PHP-FPM (opcional, já que usamos artisan serve)
+EXPOSE 9000
+
+# Inicia o servidor embutido do Laravel (ideal para Render e desenvolvimento simples)
+CMD ["php", "artisan", "serve", "--host=0.0.0.0", "--port=8000"]
