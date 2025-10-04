@@ -39,7 +39,7 @@ COPY . .
 RUN COMPOSER_ALLOW_SUPERUSER=1 composer dump-autoload --optimize
 
 # Define permissões corretas para pastas críticas do Laravel
-RUN chown -R www-www-data /var/www/html/storage /var/www/html/bootstrap/cache \
+RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 # Expõe a porta do PHP-FPM (opcional, já que usamos artisan serve)
