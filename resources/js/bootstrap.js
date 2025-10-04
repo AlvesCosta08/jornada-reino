@@ -1,6 +1,3 @@
-// resources/js/bootstrap.js
-
-// Importar Bootstrap
 import 'bootstrap';
 
 // Importar animações
