@@ -24,7 +24,7 @@ RUN apt-get update && apt-get install -y \
     && apt-get clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Instala Node.js 20 (necessário para Vite)
+# Instala Node.js 20
 RUN curl -fsSL https://deb.nodesource.com/setup_20.x | bash - \
     && apt-get install -y nodejs \
     && npm install -g npm@latest
@@ -34,12 +34,11 @@ COPY --from=composer:latest /usr/bin/composer /usr/bin/composer
 
 WORKDIR /var/www/html
 
-# Copia arquivos de dependência do PHP e JS
+# 1. Copia arquivos de dependência
 COPY composer.json composer.lock ./
 COPY package.json package-lock.json* ./
-COPY vite.config.js ./
 
-# Instala dependências do PHP (sem dev)
+# 2. Instala dependências do PHP
 RUN composer install \
     --no-dev \
     --no-scripts \
@@ -47,20 +46,24 @@ RUN composer install \
     --optimize-autoloader \
     --no-interaction
 
-# Instala dependências do Node.js e faz o build dos assets
+# 3. COPIA OS ARQUIVOS NECESSÁRIOS PARA O BUILD DO VITE
+#    Isso inclui: vite.config.js + resources/
+COPY vite.config.js ./
+COPY resources/ ./resources/
+
+# 4. Agora sim: build dos assets
 RUN npm ci && npm run build
 
-# Copia o restante da aplicação
+# 5. Copia o resto da aplicação
 COPY . .
 
-# Gera o autoloader final
+# Gera autoloader final
 RUN composer dump-autoload --optimize
 
-# Ajusta permissões (crucial para Laravel)
+# Permissões
 RUN chown -R www-data:www-data /var/www/html/storage /var/www/html/bootstrap/cache \
     && chmod -R 775 /var/www/html/storage /var/www/html/bootstrap/cache
 
 EXPOSE 8000
 
-# Comando de inicialização
 CMD ["sh", "-c", "php artisan migrate --force && php artisan serve --host=0.0.0.0 --port=${PORT:-8000}"]
