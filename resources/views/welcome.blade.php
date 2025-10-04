@@ -162,7 +162,14 @@
 
 </div>
 
-{{-- Botão Flutuante de Login/Admin --}}
+{{-- Botão Flutuante à Esquerda (Voltar ao Topo) --}}
+<div id="backToTop" class="btn btn-sm btn-outline-light rounded-circle position-fixed d-flex align-items-center justify-content-center"
+     style="bottom: 20px; left: 20px; z-index: 1050; width: 50px; height: 50px; opacity: 0.75; backdrop-filter: blur(4px); border: 1px solid rgba(255,255,255,0.25); box-shadow: 0 2px 8px rgba(0,0,0,0.25); transition: opacity 0.2s; display: none; cursor: pointer;"
+     title="Voltar ao topo">
+    <i class="fas fa-arrow-up"></i>
+</div>
+
+{{-- Botão Flutuante à Direita (Login/Admin) --}}
 @if(auth()->check())
     <a href="{{ route('admin.prayer-requests') }}"
        class="btn btn-sm btn-outline-light rounded-circle position-fixed d-flex align-items-center justify-content-center"
@@ -204,6 +211,23 @@ document.addEventListener('DOMContentLoaded', function () {
                     block: 'start'
                 });
             }
+        });
+    });
+
+    // Botão "Voltar ao Topo"
+    const backToTop = document.getElementById('backToTop');
+    window.addEventListener('scroll', () => {
+        if (window.scrollY > 300) {
+            backToTop.style.display = 'flex';
+        } else {
+            backToTop.style.display = 'none';
+        }
+    });
+
+    backToTop.addEventListener('click', () => {
+        window.scrollTo({
+            top: 0,
+            behavior: 'smooth'
         });
     });
 
